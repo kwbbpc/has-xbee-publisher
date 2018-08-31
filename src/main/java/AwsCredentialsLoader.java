@@ -32,4 +32,12 @@ public class AwsCredentialsLoader {
     public String getSecretKey() {
         return secretKey;
     }
+
+    @Override
+    public String toString() {
+        return "AwsCredentialsLoader{" +
+                "accessKey='" + accessKey + '\'' +
+                ", secretKey='" + secretKey + '\'' +
+                '}';
+    }
 }
