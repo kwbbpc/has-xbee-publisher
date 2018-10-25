@@ -1,6 +1,5 @@
 import com.digi.xbee.api.listeners.IDataReceiveListener;
 import com.digi.xbee.api.models.XBeeMessage;
-import data.Weather;
 import db.DataPipe;
 import db.sensor.SensorDao;
 import org.slf4j.Logger;
@@ -31,9 +30,6 @@ public class XBeeListener implements IDataReceiveListener {
             byte[] rawData = xBeeMessage.getData();
             int messageId = rawData[0];
             byte[] payload = Arrays.copyOfRange(rawData, 1, rawData.length);
-
-            logger.debug("Parsing weather message id {}: [{}]", messageId, payload);
-            Weather.WeatherMessage msg = Weather.WeatherMessage.parseFrom(payload);
 
             logger.debug("Publishing message to sns queue");
             this.dataHandler.publishMessage(sensor, messageId, payload);

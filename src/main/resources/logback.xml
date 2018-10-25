@@ -7,13 +7,6 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %line --- %msg%n</pattern>
         </encoder>
     </appender>
-    <appender name="FILE"
-              class="ch.qos.logback.core.FileAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%-4relative [%thread] %-5level %class - %msg%n</pattern>
-        </layout>
-        <File>myLog.log</File>
-    </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>./logs/xbee-publisher.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -24,7 +17,7 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} %F:%L - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="trace">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
     </root>
