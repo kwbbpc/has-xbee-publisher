@@ -13,20 +13,21 @@ public class ServerMain {
     private static final Logger logger = LoggerFactory.getLogger(ServerMain.class);
     private static final String USB_PORT =  "/dev/ttyUSB0";
     private static boolean isDeviceOpen = false;
+    private static boolean isDeviceCreated = false;
     private static XBeeDevice myXBeeDevice = null;
 
     public static void main(String args[]){
         logger.info("The Publisher server is starting.....");
 
 
-        while(!isDeviceOpen) {
+        while(!isDeviceCreated) {
             try {
                 myXBeeDevice = new XBeeDevice(USB_PORT, 9600);
                 logger.debug("XBee device created on {}", USB_PORT);
-                isDeviceOpen = true;
+                isDeviceCreated = true;
             } catch (Exception e) {
                 logger.error("There was an error creating the XBEE device on port {}", USB_PORT);
-                logger.info("Retrying xbee open...");
+                logger.info("Retrying xbee creation...");
             }
         }
 
@@ -44,24 +45,39 @@ public class ServerMain {
             System.exit(1);
         }
 
-        while(true) {
+        DataPipe handler = null;
+        try{
+
+            logger.info("Creating the SNS Publisher");
+            handler =
+                    new SNSPublisher(new AWSStaticCredentialsProvider(basicCreds));
+            logger.info("SNS Publisher created successfully");
+        }catch (Exception e){
+            logger.error("Error creating the SNS publisher.  Cannot continue.");
+            System.exit(1);
+        }
+
+        while(!isDeviceOpen) {
             try {
 
-                logger.info("Creating the SNS Publisher");
-                DataPipe handler =
-                        new SNSPublisher(new AWSStaticCredentialsProvider(basicCreds));
-                logger.info("SNS Publisher created successfully");
 
                 logger.info("Opening USB Port at {}...", USB_PORT);
                 myXBeeDevice.open();
                 logger.info("USB {} opened successfully!", USB_PORT);
 
                 myXBeeDevice.addDataListener(new XBeeListener(handler));
+                isDeviceOpen = true;
+                break;
 
             } catch (Exception e) {
                 logger.error("Error when reading from xbee device.  Will retry in 5 seconds.  Error: {}", e);
                 sleep();
             }
+        }
+
+        //loop forever
+        while(true){
+            sleep();
         }
     }
 
