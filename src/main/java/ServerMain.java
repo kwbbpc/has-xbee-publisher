@@ -3,6 +3,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.digi.xbee.api.XBeeDevice;
 import db.DataPipe;
 import db.SNSPublisher;
+import messaging.FlowCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,8 @@ public class ServerMain {
             System.exit(1);
         }
 
+
+
         while(!isDeviceOpen) {
             try {
 
@@ -66,6 +69,10 @@ public class ServerMain {
                 logger.info("USB {} opened successfully!", USB_PORT);
 
                 myXBeeDevice.addDataListener(new XBeeListener(handler));
+
+
+
+
                 isDeviceOpen = true;
                 break;
 
@@ -73,6 +80,41 @@ public class ServerMain {
                 logger.error("Error when reading from xbee device.  Will retry in 5 seconds.  Error: {}", e);
                 sleep();
             }
+        }
+
+        try {
+ /*            while(true) {
+               FlowCommand.FlowCommandMessage cmd = FlowCommand.FlowCommandMessage.newBuilder().setIsOn(true).setPinNumber(2).setRunTimeMs(5000).build();
+
+                byte[] msg = new byte[cmd.toByteArray().length + 1];
+                msg[0] = 3;
+                System.arraycopy(cmd.toByteArray(), 0, msg, 1, cmd.toByteArray().length);
+
+
+                myXBeeDevice.sendBroadcastData(msg);
+
+                FlowCommand.FlowCommandMessage cmd2 = FlowCommand.FlowCommandMessage.newBuilder().setIsOn(true).setPinNumber(4).setRunTimeMs(5000).build();
+
+                byte[] msg2 = new byte[cmd2.toByteArray().length + 1];
+                msg2[0] = 3;
+                System.arraycopy(cmd2.toByteArray(), 0, msg2, 1, cmd2.toByteArray().length);
+
+
+                myXBeeDevice.sendBroadcastData(msg2);
+
+                FlowCommand.FlowCommandMessage cmd3 = FlowCommand.FlowCommandMessage.newBuilder().setIsOn(true).setPinNumber(3).setRunTimeMs(3600000).build();
+
+                byte[] msg3 = new byte[cmd3.toByteArray().length + 1];
+                msg3[0] = 3;
+                System.arraycopy(cmd3.toByteArray(), 0, msg3, 1, cmd3.toByteArray().length);
+
+
+                myXBeeDevice.sendBroadcastData(msg3);
+
+
+            }*/
+        }catch (Exception e){
+            System.exit(1);
         }
 
         //loop forever
